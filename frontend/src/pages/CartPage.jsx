@@ -207,7 +207,7 @@ export default function CartPage() {
     }
 
     // ✅ Create order
-    const orderRes = await fetch("http://localhost:5000/api/payment/create-order", {
+    const orderRes = await fetch("https://quickbitesfinal-2.onrender.com/api/payment/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: total }),
@@ -230,7 +230,7 @@ export default function CartPage() {
         // ✅ Verify & delete all foods
         const foodIds = cart.map((item) => item._id);
 
-        const verifyRes = await fetch("http://localhost:5000/api/payment/verify", {
+        const verifyRes = await fetch("https://quickbitesfinal-2.onrender.com/api/payment/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -279,7 +279,7 @@ export default function CartPage() {
           }}
         >
           <img
-            src={`http://localhost:5000${item.images[0]}`}
+            src={`https://quickbitesfinal-2.onrender.com${item.images[0]}`}
             alt={item.name}
             style={{
               width: "80px",

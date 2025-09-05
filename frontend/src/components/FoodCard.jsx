@@ -217,7 +217,7 @@
           {food.images?.length > 0 ? (
             food.images.length === 1 ? (
               <img
-                src={`http://localhost:5000${food.images[0]}`}
+                src={`https://quickbitesfinal-2.onrender.com${food.images[0]}`}
                 alt={food.name}
                 style={{
                   height: "200px",
@@ -241,7 +241,7 @@
                 {food.images.map((img, idx) => (
                   <img
                     key={idx}
-                    src={`http://localhost:5000${img}`}
+                    src={`https://quickbitesfinal-2.onrender.com${img}`}
                     alt={`${food.name} ${idx + 1}`}
                     style={{
                       height: "200px",

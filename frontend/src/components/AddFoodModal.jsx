@@ -210,7 +210,7 @@ export default function AddFoodModal({ onClose }) {
     images.forEach((file) => fd.append("images", file));
     fd.append("seller", user?._id);
 
-    const res = await fetch("http://localhost:5000/api/food", {
+    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/food", {
       method: "POST",
       body: fd,
     });

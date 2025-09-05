@@ -7,13 +7,13 @@ export default function SellerPanel() {
   const [foods, setFoods] = useState([]);
   const [showAddFood, setShowAddFood] = useState(false);
   const fetchFoods = async () => {
-    const res = await fetch(`http://localhost:5000/api/food/seller/${user._id}`);
+    const res = await fetch(`https://quickbitesfinal-2.onrender.com/api/food/seller/${user._id}`);
     const data = await res.json();
     setFoods(Array.isArray(data) ? data : []);
   };
   useEffect(() => {
     async function fetchFoods() {
-        const res = await fetch(`http://localhost:5000/api/food/seller/${user._id}`);
+        const res = await fetch(`https://quickbitesfinal-2.onrender.com/api/food/seller/${user._id}`);
         const data = await res.json();
        setFoods(Array.isArray(data) ? data : []);
 

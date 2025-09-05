@@ -630,10 +630,10 @@ export default function BuyerHome({ foods, onLogin }) {
       try {
         const [cityRes, nearRes] = await Promise.all([
           fetch(
-            `http://localhost:5000/api/location/reverse?lat=${buyerLoc.latitude}&lng=${buyerLoc.longitude}`
+            `https://quickbitesfinal-2.onrender.com/api/location/reverse?lat=${buyerLoc.latitude}&lng=${buyerLoc.longitude}`
           ),
           fetch(
-            `http://localhost:5000/api/food/near?lat=${buyerLoc.latitude}&lng=${buyerLoc.longitude}&maxDistance=5000`
+            `https://quickbitesfinal-2.onrender.com/api/food/near?lat=${buyerLoc.latitude}&lng=${buyerLoc.longitude}&maxDistance=5000`
           ),
         ]);
 

@@ -143,7 +143,7 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/food");
+        const res = await fetch("https://quickbitesfinal-2.onrender.com/api/food");
         const data = await res.json();
         setFoods(Array.isArray(data) ? data : []);
       } catch (err) {

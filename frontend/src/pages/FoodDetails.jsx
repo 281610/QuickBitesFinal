@@ -163,7 +163,7 @@ export default function FoodDetails() {
 
   useEffect(() => {
     async function fetchFood() {
-      const res = await fetch(`http://localhost:5000/api/food/${id}`);
+      const res = await fetch(`https://quickbitesfinal-2.onrender.com/api/food/${id}`);
       const data = await res.json();
       setFood(data);
       setSelectedImg(data.images?.[0] || null);
@@ -218,7 +218,7 @@ export default function FoodDetails() {
             {food.images.map((img, idx) => (
               <motion.img
                 key={idx}
-                src={`http://localhost:5000${img}`}
+                src={`https://quickbitesfinal-2.onrender.com${img}`}
                 alt={`${food.name} ${idx + 1}`}
                 onClick={() => setSelectedImg(img)}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -248,7 +248,7 @@ export default function FoodDetails() {
           transition={{ delay: 0.4, duration: 0.5 }}
         >
           <img
-            src={`http://localhost:5000${selectedImg}`}
+            src={`https://quickbitesfinal-2.onrender.com${selectedImg}`}
             alt={food.name}
             style={{
               width: "450px",

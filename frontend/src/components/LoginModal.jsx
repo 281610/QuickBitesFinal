@@ -613,7 +613,7 @@ export default function LoginModal({ onClose }) {
 
   // 🔹 Send OTP
   async function handleSendOtp() {
-    const res = await fetch("http://localhost:5000/api/auth/send-otp", {
+    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/auth/send-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: form.email }),
@@ -630,7 +630,7 @@ export default function LoginModal({ onClose }) {
   // 🔹 Verify OTP
   async function handleVerifyOtp(e) {
     e.preventDefault();
-    const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: form.email, otp }),
@@ -669,7 +669,7 @@ export default function LoginModal({ onClose }) {
       headers["Content-Type"] = "application/json";
     }
 
-    const res = await fetch("http://localhost:5000/api/auth/register", {
+    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/auth/register", {
       method: "POST",
       headers,
       body,

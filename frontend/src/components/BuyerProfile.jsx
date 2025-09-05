@@ -61,7 +61,7 @@ export default function BuyerProfile() {
     async function fetchOrders() {
       if (!user?._id) return;
       try {
-        const res = await fetch(`http://localhost:5000/api/order/${user._id}`);
+        const res = await fetch(`https://quickbitesfinal-2.onrender.com/api/order/${user._id}`);
 
         const data = await res.json();
         setOrders(data);
@@ -94,7 +94,7 @@ export default function BuyerProfile() {
       >
         {user.photo && (
           <img
-            src={`http://localhost:5000${user.photo}`}
+            src={`https://quickbitesfinal-2.onrender.com${user.photo}`}
             alt="User"
             style={{
               width: "100px",
