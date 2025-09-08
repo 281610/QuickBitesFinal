@@ -70,9 +70,12 @@ router.get("/", getFoods);
 router.get("/near", getFoodsNear);
 
 // Get foods by seller
-router.get("/seller/:sellerId", getSellerFoods);
+/*router.get("/seller/:sellerId", getSellerFoods);
 
 // Get single food by ID
+router.get("/:id", getFoodById);
+*/
+router.get("/seller/:sellerId", getSellerFoods);
 router.get("/:id", getFoodById);
 
 export default router;

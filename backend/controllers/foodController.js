@@ -123,49 +123,41 @@ import Food from "../models/Food.js"; // adjust path if different
 
 export const addFood = async (req, res) => {
   try {
-    console.log("📩 Incoming Food Data:", req.body);
+    const imageUrls = [];
 
-    // Upload files to Cloudinary (if any). multer stores temporarily on disk.
-    let images = [];
     if (req.files && req.files.length > 0) {
-      // upload all files in parallel
-      const uploadPromises = req.files.map(file =>
-        cloudinary.uploader.upload(file.path, { folder: "quickrent_food" })
-      );
-
-      const results = await Promise.all(uploadPromises);
-      images = results.map(r => r.secure_url || r.url);
-
-      // remove temp files
-      await Promise.all(req.files.map(f => fs.unlink(f.path).catch(() => {})));
+      for (const file of req.files) {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: "quickbites/foods",
+        });
+        imageUrls.push(result.secure_url); // ✅ Cloudinary URL
+    await fs.unlink(file.path);
+      }
     }
 
-    // Parse coordinates safely
-    const lat = req.body.lat ? parseFloat(req.body.lat) : undefined;
-    const lng = req.body.lng ? parseFloat(req.body.lng) : undefined;
+    const { lat, lng } = req.body;
 
     const food = new Food({
       seller: req.body.seller,
       name: req.body.name,
       type: req.body.type,
       description: req.body.description,
-      images,
+      images: imageUrls, // ✅ Store Cloudinary URLs, not local
       price: req.body.price,
       contact: req.body.contact,
-      location: (lat !== undefined && lng !== undefined) ? {
+      location: {
         type: "Point",
-        coordinates: [lng, lat],
-      } : undefined,
+        coordinates: [parseFloat(lng), parseFloat(lat)],
+      },
     });
 
     await food.save();
     res.json(food);
   } catch (err) {
-    console.error("❌ Error adding food:", err);
+    console.error("❌ Error adding food:", err.message);
     res.status(500).json({ error: err.message });
   }
 };
-
 export const getFoods = async (req, res) => {
   try {
     const foods = await Food.find().populate("seller", "name email");
