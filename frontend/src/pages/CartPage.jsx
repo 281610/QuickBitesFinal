@@ -279,7 +279,7 @@ export default function CartPage() {
           }}
         >
           <img
-            src={`https://quickbitesfinal-2.onrender.com${item.images[0]}`}
+            src={item.images[0]}
             alt={item.name}
             style={{
               width: "80px",
