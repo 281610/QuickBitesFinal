@@ -414,7 +414,7 @@ export default function FoodDetails() {
             {food.images.map((img, idx) => (
               <motion.img
                 key={idx}
-                src={`https://quickbitesfinal-2.onrender.com${img}`}
+                src={img}
                 alt={`${food.name} ${idx + 1}`}
                 onClick={() => setSelectedImg(img)}
                 style={{
@@ -437,7 +437,7 @@ export default function FoodDetails() {
         {/* Main Image */}
         <motion.div>
           <img
-            src={`https://quickbitesfinal-2.onrender.com${selectedImg}`}
+            src={selectedImg}
             alt={food.name}
             style={{
               width: "100%",
