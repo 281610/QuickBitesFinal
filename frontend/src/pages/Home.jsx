@@ -113,7 +113,7 @@ export default function Home() {
   );
 }
 */
-import { useEffect, useState } from "react";
+/*import { useEffect, useState } from "react";
 import BuyerHome from "../components/BuyerHome";
 import SellerPanel from "../components/SellerPanel";
 import { useAuth } from "../context/AuthContext";
@@ -160,6 +160,78 @@ export default function Home() {
       )}
       {user?.role === "seller" && <SellerPanel />}
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+    </div>
+  );
+}
+*/
+import { useEffect, useState } from "react";
+import BuyerHome from "../components/BuyerHome";
+import SellerPanel from "../components/SellerPanel";
+import { useAuth } from "../context/AuthContext";
+import LoginModal from "../components/LoginModal";
+
+export default function Home() {
+  const { user } = useAuth();
+  const [foods, setFoods] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
+
+  // Get coords once and stash for BuyerHome
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        localStorage.setItem(
+          "buyerLocation",
+          JSON.stringify({ latitude, longitude })
+        );
+      },
+      () => {} // ignore errors, BuyerHome has fallbacks
+    );
+  }, []);
+
+  // Fetch ALL foods (BuyerHome will fetch nearby separately)
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("https://quickbitesfinal-2.onrender.com/api/food");
+        const data = await res.json();
+        setFoods(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("❌ Error fetching foods:", err);
+      }
+    })();
+  }, []);
+
+  return (
+    <div
+      style={{
+        padding: "0",
+        margin: "0",
+        width: "100%",
+        boxSizing: "border-box",
+      }}
+    >
+      {!user && <BuyerHome foods={foods} onLogin={() => setShowLogin(true)} />}
+      {user?.role === "buyer" && (
+        <BuyerHome foods={foods} onLogin={() => setShowLogin(true)} />
+      )}
+      {user?.role === "seller" && <SellerPanel />}
+
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+      {/* Optional: global responsive tweaks */}
+      <style>
+        {`
+          @media (max-width: 768px) {
+            body, html, #root {
+              padding: 0;
+              margin: 0;
+              width: 100%;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import express from "express";
+/*import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -45,6 +45,49 @@ app.get("/api/reverse-geocode", async (req, res) => {
     }
   });
   
+const PORT = process.env.PORT || 5000;
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected...");
+    app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+  })
+  .catch(err => console.error("❌ MongoDB Connection Error:", err));
+*/
+// server.js
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// keep static route if you still have some pre-existing images in /uploads (optional)
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+import authRoutes from "./routes/authRoutes.js";
+import foodRoutes from "./routes/foodRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+
+app.use("/api/auth", authRoutes);
+app.use("/api/food", foodRoutes);
+app.use("/api/order", orderRoutes);
+app.use("/api/location", locationRoutes);
+app.use("/api/payment", paymentRoutes);
+
+// reverse geocode route etc (keep your existing handlers)...
+
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.MONGO_URI)
