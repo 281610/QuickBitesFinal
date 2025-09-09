@@ -30,7 +30,7 @@ self.addEventListener("push", event => {
     if (event.action === "view-offers") {
       event.waitUntil(self.clients.openWindow("/offers"));
     } else {
-      event.waitUntil(self.clients.openWindow(event.notification.data.url));
+      event.waitUntil(self.clients.openWindow("/"));
     }
   });
   
