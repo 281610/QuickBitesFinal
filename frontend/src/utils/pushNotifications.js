@@ -20,6 +20,8 @@ export async function subscribeUser() {
       body: JSON.stringify(subscription),
       headers: { "Content-Type": "application/json" },
     });
+
+    console.log("✅ User subscribed for push notifications!");
   }
 }
 
@@ -30,16 +32,15 @@ function urlBase64ToUint8Array(base64String) {
   const rawData = window.atob(base64);
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
+
 export async function initPush() {
-    if ("Notification" in window && "serviceWorker" in navigator) {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        console.log("✅ Notification permission granted.");
-        // Now subscribe user
-        subscribeUser();
-      } else {
-        console.warn("❌ Notification permission denied.");
-      }
+  if ("Notification" in window && "serviceWorker" in navigator) {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      console.log("✅ Notification permission granted.");
+      subscribeUser();
+    } else {
+      console.warn("❌ Notification permission denied.");
     }
   }
-  
+}
