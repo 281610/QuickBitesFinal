@@ -203,7 +203,7 @@ app.post("/api/notify", async (req, res) => {
     body: "Check out the latest food item 🚀",
     icon: "https://yourcdn.com/icons/burger.png",
     image: "https://yourcdn.com/banners/food-offer.jpg",
-    url: "/offers/food"
+    url: "/"
   });
 
   try {
