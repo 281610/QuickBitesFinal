@@ -79,6 +79,7 @@ import foodRoutes from "./routes/foodRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import locationRoutes from "./routes/locationRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import webpush from "web-push";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/food", foodRoutes);
@@ -89,7 +90,52 @@ app.use("/api/payment", paymentRoutes);
 // reverse geocode route etc (keep your existing handlers)...
 
 const PORT = process.env.PORT || 5000;
+export const sendNotification = async (subscription, payload) => {
+  try {
+    await webpush.sendNotification(
+      subscription,
+      JSON.stringify({
+        title: "🍕 Hot Deal Just For You!",
+        body: "Flat 30% off on your next pizza order 🍕🔥",
+        icon: "https://yourcdn.com/icons/pizza.png",
+        image: "https://yourcdn.com/banners/pizza-offer.jpg",
+        url: "/offers/pizza"
+      })
+    );
+  } catch (err) {
+    console.error("Push error:", err);
+  }
+};
+// Configure web-push
+webpush.setVapidDetails(
+  "mailto:your-email@example.com",
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
 
+let subscriptions = []; // store in DB ideally
+
+// Save subscription from frontend
+app.post("/api/subscribe", (req, res) => {
+  const subscription = req.body;
+  subscriptions.push(subscription);
+  res.status(201).json({});
+});
+
+// Send notification to all subscribers
+app.post("/api/notify", async (req, res) => {
+  const payload = JSON.stringify({ title: "New Food Available!", body: "Check out the latest food item 🚀" });
+  
+  try {
+    for (let sub of subscriptions) {
+      await webpush.sendNotification(sub, payload);
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Push error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected...");

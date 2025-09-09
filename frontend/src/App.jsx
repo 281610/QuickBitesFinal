@@ -5,8 +5,12 @@ import Profile from "./pages/Profile";
 import FoodDetails from "./pages/FoodDetails";
 import CartPage from "./pages/CartPage";
 import CookieConsent from "react-cookie-consent";
-
+import { initPush } from "./utils/pushNotifications";
+import { useState,useEffect } from "react";
 export default function App() {
+  useEffect(() => {
+    initPush();
+  }, []);
   return (<>
     <BrowserRouter>
       <Navbar />
