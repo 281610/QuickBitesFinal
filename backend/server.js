@@ -55,7 +55,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 */
 // server.js
-import express from "express";
+/*import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -136,6 +136,90 @@ app.post("/api/notify", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected...");
+    app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+  })
+  .catch(err => console.error("❌ MongoDB Connection Error:", err));
+*/
+// server.js
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+import webpush from "web-push";
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// ---------------- ROUTES ----------------
+import authRoutes from "./routes/authRoutes.js";
+import foodRoutes from "./routes/foodRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+
+app.use("/api/auth", authRoutes);
+app.use("/api/food", foodRoutes);
+app.use("/api/order", orderRoutes);
+app.use("/api/location", locationRoutes);
+app.use("/api/payment", paymentRoutes);
+
+// ---------------- WEB-PUSH CONFIG ----------------
+webpush.setVapidDetails(
+  "mailto:your-email@example.com",
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
+
+// In-memory storage for now (use MongoDB in real project)
+let subscriptions = [];
+
+// ✅ Route: frontend fetches public VAPID key
+app.get("/api/vapidPublicKey", (req, res) => {
+  res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
+});
+
+// ✅ Route: save new subscription
+app.post("/api/subscribe", (req, res) => {
+  const subscription = req.body;
+  subscriptions.push(subscription);
+  res.status(201).json({ message: "Subscription saved ✅" });
+});
+
+// ✅ Route: send test notification
+app.post("/api/notify", async (req, res) => {
+  const payload = JSON.stringify({
+    title: "🍔 New Food Available!",
+    body: "Check out the latest food item 🚀",
+    icon: "https://yourcdn.com/icons/burger.png",
+    image: "https://yourcdn.com/banners/food-offer.jpg",
+    url: "/offers/food"
+  });
+
+  try {
+    await Promise.all(
+      subscriptions.map(sub => webpush.sendNotification(sub, payload))
+    );
+    res.json({ success: true, message: "Notification sent ✅" });
+  } catch (err) {
+    console.error("❌ Push error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------- DB + SERVER START ----------------
+const PORT = process.env.PORT || 5000;
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected...");
