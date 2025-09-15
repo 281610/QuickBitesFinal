@@ -6,23 +6,30 @@ import FoodDetails from "./pages/FoodDetails";
 import CartPage from "./pages/CartPage";
 import CookieConsent from "react-cookie-consent";
 import { initPush } from "./utils/pushNotifications";
-import { useState,useEffect } from "react";
+import { useEffect } from "react";
+import Banner from "./components/Banner";
+import Footer from "./components/Footer";
+
 export default function App() {
   useEffect(() => {
     initPush();
   }, []);
-  return (<>
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/food/:id" element={<FoodDetails />} />
-        <Route path="/cartpage" element={<CartPage />} />
 
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-    </BrowserRouter>
-    <CookieConsent
+  return (
+    <>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/food/:id" element={<FoodDetails />} />
+          <Route path="/cartpage" element={<CartPage />} />
+          <Route path="/banner" element={<Banner />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+
+      <CookieConsent
         location="bottom"
         buttonText="Accept All"
         declineButtonText="Decline"

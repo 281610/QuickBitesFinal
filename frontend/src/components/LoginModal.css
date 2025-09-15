@@ -1,112 +1,423 @@
-/* Overlay background */
+/* Complete redesign to match the provided image - Fixed contrast issues */
 .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    animation: fadeIn 0.3s ease-in-out;
-  }
-  
-  /* Modal box */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-container {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.login-card {
+  display: flex;
+  background: white; /* Changed from #f5f5f5 to white for better contrast */
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 500px;
+  max-height: 90vh; /* Added max-height to ensure it doesn't exceed screen height */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative; /* Added relative positioning for close button */
+}
+
+/* Added close button styles */
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  color: #666;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-button:hover {
+  background: white;
+  color: #ff7b54;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.close-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.login-left {
+  flex: 1;
+  background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%); /* Ensured gradient is properly applied */
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+  position: relative;
+  /* Added explicit background to ensure gradient shows */
+  background-attachment: fixed;
+}
+
+.login-content {
+  margin-bottom: 40px;
+}
+
+.login-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  color: white; /* Explicitly set white color for contrast */
+}
+
+.login-subtitle {
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.95; /* Increased opacity from 0.9 to 0.95 for better contrast */
+  margin-bottom: 30px;
+  color: white; /* Explicitly set white color */
+}
+
+.login-register-prompt {
+  font-size: 0.95rem;
+  color: white; /* Explicitly set white color */
+}
+
+.create-account-link {
+  background: none;
+  border: none;
+  color: white; /* Explicitly set white color */
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: inherit;
+}
+
+.create-account-link:hover {
+  opacity: 0.9; /* Reduced hover opacity to maintain contrast */
+  color: rgba(255, 255, 255, 0.9); /* Explicit hover color */
+}
+
+.image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15); /* Increased opacity for better visibility */
+  border: 2px dashed rgba(255, 255, 255, 0.4); /* Increased border opacity */
+  border-radius: 12px;
+  height: 200px;
+  backdrop-filter: blur(10px);
+}
+
+.placeholder-icon {
+  color: rgba(255, 255, 255, 0.8); /* Increased opacity for better visibility */
+}
+
+.login-right {
+  flex: 1;
+  background: white;
+  padding: 0;
+  display: flex;
+  align-items: stretch; /* Allow the right side to stretch to full height */
+  justify-content: center;
+  overflow: hidden;
+}
+
+.form-container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Make form container scrollable when content overflows */
+  max-height: calc(90vh - 40px);
+}
+
+/* Add scrollable class for better scroll styling */
+.form-container.scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: #ff7b54 #f1f1f1;
+}
+
+.form-container.scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.form-container.scrollable::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.form-container.scrollable::-webkit-scrollbar-thumb {
+  background: #ff7b54;
+  border-radius: 3px;
+}
+
+.form-container.scrollable::-webkit-scrollbar-thumb:hover {
+  background: #ff6b9d;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  padding-right: 45px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  color: #333; /* Explicit text color for inputs */
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #ff7b54;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 123, 84, 0.1);
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+.input-icon {
+  position: absolute;
+  right: 12px;
+  font-size: 1.2rem;
+  color: #999;
+  pointer-events: none;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #999;
+  padding: 0;
+}
+
+.password-toggle:hover {
+  color: #666;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  margin: 10px 0;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.radio-label input[type="radio"] {
+  margin: 0;
+}
+
+.radio-text {
+  font-weight: 500;
+  color: #666; /* Explicit color for radio text */
+}
+
+.file-input {
+  padding: 8px 12px;
+  background: white;
+  cursor: pointer;
+  color: #333; /* Explicit color for file input */
+}
+
+.forgot-password {
+  text-align: right;
+  margin: -10px 0 10px 0;
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  color: #ff7b54;
+  text-decoration: underline;
+}
+
+.login-button {
+  background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%);
+  color: white; /* Explicitly set white text on gradient button */
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 123, 84, 0.3);
+  color: white; /* Maintain white text on hover */
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.social-login {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.social-link {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.social-link:hover {
+  color: #ff7b54;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .modal-container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 28px;
-    border-radius: 14px;
-    width: 420px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-    animation: slideUp 0.3s ease;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-width: 95%;
   }
-  
-  /* Title */
-  .modal-title {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    text-align: center;
-    color: #333;
-  }
-  
-  /* Form */
-  .modal-form {
-    display: flex;
+
+  .login-card {
     flex-direction: column;
-    gap: 12px;
+    min-height: auto;
+    max-height: 95vh; /* Ensure mobile modal doesn't exceed screen height */
   }
-  
-  .modal-input {
-    width: 100%;
-    border: 1px solid #ddd;
-    padding: 10px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border 0.2s ease, box-shadow 0.2s ease;
+
+  .login-left {
+    padding: 30px 20px;
+    min-height: 200px;
+    /* Ensure gradient is maintained on mobile */
+    background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%);
   }
-  
-  .modal-input:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-    outline: none;
+
+  .login-title {
+    font-size: 2rem;
+    color: white; /* Maintain white text on mobile */
   }
-  
-  /* Radio buttons */
+
+  .login-subtitle {
+    color: white; /* Maintain white text on mobile */
+  }
+
+  .login-register-prompt {
+    color: white; /* Maintain white text on mobile */
+  }
+
+  .image-placeholder {
+    height: 120px;
+  }
+
+  .form-container {
+    margin: 0;
+    padding: 30px 20px;
+    border-radius: 0 0 20px 20px;
+    max-height: calc(95vh - 200px); /* Adjust max height for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .login-left {
+    padding: 20px;
+    /* Ensure gradient is maintained on small screens */
+    background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%);
+  }
+
+  .login-title {
+    font-size: 1.8rem;
+    color: white; /* Maintain white text on small screens */
+  }
+
+  .form-container {
+    padding: 20px;
+    max-height: calc(95vh - 180px); /* Further adjust max height for small screens */
+  }
+
   .radio-group {
-    display: flex;
-    justify-content: space-around;
-    font-size: 14px;
-    color: #555;
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  /* Buttons */
-  .modal-btn {
-    background: #4f46e5;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    transition: background 0.25s;
-  }
-  
-  .modal-btn:hover {
-    background: #4338ca;
-  }
-  
-  .modal-footer {
-    font-size: 14px;
-    margin-top: 16px;
-    text-align: center;
-    color: #444;
-  }
-  
-  .modal-switch {
-    background: none;
-    border: none;
-    color: #4f46e5;
-    font-weight: 600;
-    margin-left: 6px;
-    cursor: pointer;
-  }
-  
-  .modal-switch:hover {
-    text-decoration: underline;
-  }
-  
-  /* Animations */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideUp {
-    from { transform: translateY(40px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  
+}
