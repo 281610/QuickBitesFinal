@@ -1,25 +1,11 @@
-/*import { useAuth } from "../context/AuthContext";
-import BuyerProfile from "../components/BuyerProfile";
-import SellerPanel from "../components/SellerPanel";
+"use client"
+
+import { useAuth } from "../context/AuthContext"
+import BuyerProfile from "../components/BuyerProfile"
+import SellerPanel from "../components/SellerPanel"
 
 export default function Profile() {
-  const { user } = useAuth();
-
-  if (!user) return <p className="p-4">Please login to view profile</p>;
-
-  return (
-    <div>
-      {user.role === "buyer" && <BuyerProfile />}
-      {user.role === "seller" && <SellerPanel />}
-    </div>
-  );
-}*/
-import { useAuth } from "../context/AuthContext";
-import BuyerProfile from "../components/BuyerProfile";
-import SellerPanel from "../components/SellerPanel";
-
-export default function Profile() {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   if (!user)
     return (
@@ -33,7 +19,7 @@ export default function Profile() {
       >
         Please login to view profile
       </p>
-    );
+    )
 
   return (
     <div
@@ -48,18 +34,16 @@ export default function Profile() {
       {user.role === "buyer" && <BuyerProfile />}
       {user.role === "seller" && <SellerPanel />}
 
-      <style>
-        {`
+      <style jsx>{`
+        .profile-container {
+          padding: 16px;
+        }
+        @media (max-width: 768px) {
           .profile-container {
-            padding: 16px;
+            padding: 12px;
           }
-          @media (max-width: 768px) {
-            .profile-container {
-              padding: 12px;
-            }
-          }
-        `}
-      </style>
+        }
+      `}</style>
     </div>
-  );
+  )
 }

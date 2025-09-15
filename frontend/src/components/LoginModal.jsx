@@ -723,13 +723,18 @@ export default function LoginModal({ onClose }) {
               </p>
             </div>
             <div className="image-placeholder">
-              <div className="placeholder-icon">
+               <img 
+              src="/Login.png"   // apni image ka path
+              alt="Login illustration" 
+              className="w-full h-full object-cover" 
+            />
+              {/* <div className="placeholder-icon">
                 <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                   <circle cx="8.5" cy="8.5" r="1.5" />
                   <polyline points="21,15 16,10 5,21" />
                 </svg>
-              </div>
+              </div> */}
             </div>
           </div>
 

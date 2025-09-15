@@ -49,7 +49,7 @@ export default function Navbar() {
       {/* ✅ Desktop Navbar */}
       <div className="hidden md:flex mx-auto items-center justify-between h-[64px] px-6">
         {/* Left: Logo */}
-        <Link to="/" className="flex items-center text-2xl font-bold text-purple-600">
+        <Link to="/" className="flex items-center text-2xl font-bold text-[#ff7b54]">
           QuickBites
         </Link>
 
@@ -59,7 +59,7 @@ export default function Navbar() {
             <input
               type="text"
               placeholder='Search for "banana"'
-              className="w-full pl-10 pr-4 h-8 rounded-md border-2 border-purple-500 bg-gray-50 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full pl-10 pr-4 h-8 rounded-md border-2 border-[#ff7b54] bg-gray-50 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -72,7 +72,7 @@ export default function Navbar() {
           <div ref={desktopDropdownRef} className="relative">
             <button
               onClick={() => setDesktopDropdownOpen((prev) => !prev)}
-              className="flex items-center gap-1 text-gray-700 hover:text-purple-600"
+              className="flex items-center gap-1 text-[#ff7b54] hover:text-[#ff6b9d] cursor-pointer "
             >
               <User size={20} />
               {user ? (user.role === "buyer" ? "Profile" : "Seller") : "Login"}
@@ -116,7 +116,7 @@ export default function Navbar() {
                     <div className="flex flex-col text-center space-y-3 py-4">
                       {user.role === "buyer" ? (
                         <>
-                          <Link to="/BuyerProfile" className="flex items-center justify-center gap-2 px-6 py-3 text-lg hover:bg-gray-100">
+                          <Link to="/Profile" className="flex items-center justify-center gap-2 px-6 py-3 text-lg hover:bg-gray-100">
                             <User size={20} /> My Profile
                           </Link>
                           <Link className="flex items-center justify-center gap-2 px-6 py-3 text-lg hover:bg-gray-100">
@@ -156,12 +156,12 @@ export default function Navbar() {
           </div>
 
           {/* Cart */}
-          <Link to="/CartPage" className="flex items-center gap-1 text-gray-700 hover:text-purple-600">
+          <Link to="/CartPage" className="flex items-center gap-1 text-[#ff7b54] hover:text-[#ff6b9d]">
             <ShoppingCart size={20} /> Cart
           </Link>
 
           {/* Help */}
-          <Link to="/help" className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+          <Link to="/Help" className="px-4 py-2 text-[#ff7b54] hover:text-[#ff6b9d] flex items-center gap-2">
             <HelpCircle size={18} /> Help
           </Link>
         </div>
@@ -216,7 +216,7 @@ export default function Navbar() {
                       <>
                         {user.role === "buyer" ? (
                           <>
-                            <Link to="/BuyerProfile" className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                            <Link to="/Profile" className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                               <User size={18} /> My Profile
                             </Link>
                             <Link to="/CartPage" className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">

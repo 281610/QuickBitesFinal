@@ -8,6 +8,7 @@ import CookieConsent from "react-cookie-consent";
 import { initPush } from "./utils/pushNotifications";
 import { useEffect } from "react";
 import Banner from "./components/Banner";
+// import Help from "./components/help";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/cartpage" element={<CartPage />} />
           <Route path="/banner" element={<Banner />} />
           <Route path="/profile" element={<Profile />} />
+           {/* <Route path="/Help" element={<Help />} /> */}
         </Routes>
         <Footer />
       </BrowserRouter>
