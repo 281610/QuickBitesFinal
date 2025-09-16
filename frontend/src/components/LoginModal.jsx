@@ -697,37 +697,34 @@ export default function LoginModal({ onClose }) {
           </button>
 
           {/* Left side with gradient and image placeholder */}
-          <div className="login-left">
-            <div className="login-content">
-              <h1 className="login-title">{isRegister ? "Create Account" : "Login to Account"}</h1>
-              {/* <p className="login-subtitle">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua.
-              </p> */}
-              <p className="login-register-prompt">
-                {isRegister ? (
-                  <>
-                    Have an Account?{" "}
-                    <button type="button" onClick={() => setIsRegister(false)} className="create-account-link">
-                      Login
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    Don't have an Account?{" "}
-                    <button type="button" onClick={() => setIsRegister(true)} className="create-account-link">
-                      Create Account
-                    </button>
-                  </>
-                )}
-              </p>
-            </div>
-            <div className="image-placeholder">
-               <img 
+<div className="login-left">
+  <div className="login-content">
+    <h1 className="brand-title">QuickBites</h1>
+    <p className="login-register-prompt">
+      {isRegister ? (
+        <>
+          Have an Account?{" "}
+          <button type="button" onClick={() => setIsRegister(false)} className="create-account-link">
+            Login
+          </button>
+        </>
+      ) : (
+        <>
+          Don't have an Account?{" "}
+          <button type="button" onClick={() => setIsRegister(true)} className="create-account-link">
+            Create Account
+          </button>
+        </>
+      )}
+    </p>
+  </div>
+
+            {/* <div className="image-placeholder"> */}
+               {/* <img 
               src="/Login.png"   // apni image ka path
               alt="Login illustration" 
               className="w-full h-full object-cover" 
-            />
+            /> */}
               {/* <div className="placeholder-icon">
                 <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -735,7 +732,7 @@ export default function LoginModal({ onClose }) {
                   <polyline points="21,15 16,10 5,21" />
                 </svg>
               </div> */}
-            </div>
+            {/* </div> */}
           </div>
 
           {/* Right side with form */}

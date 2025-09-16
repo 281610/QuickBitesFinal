@@ -69,18 +69,37 @@
   height: 20px;
 }
 
+/* Branding Left Section */
 .login-left {
   flex: 1;
-  background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%); /* Ensured gradient is properly applied */
-  padding: 40px;
+  background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%);
+  color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  color: white;
-  position: relative;
-  /* Added explicit background to ensure gradient shows */
-  background-attachment: fixed;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInLeft 1s ease-in-out;
 }
+
+.brand-title {
+  font-size: 4rem; /* default */
+  font-weight: bold;
+  font-style: italic;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  animation: floatText 3s infinite ease-in-out;
+  text-align: center;
+  margin-top: 40px; /* 👈 niche shift */
+}
+
+
+/* Floating animation */
+@keyframes floatText {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0); }
+}
+
 
 .login-content {
   margin-bottom: 40px;
@@ -103,8 +122,13 @@
 }
 
 .login-register-prompt {
-  font-size: 0.95rem;
-  color: white; /* Explicitly set white color */
+  font-size: 0.9rem;
+  color: white;
+  position: absolute;
+  bottom: 15px;
+  left: 20px;      /* 👈 left se attach */
+  text-align: left;
+  width: auto;     /* 👈 pura 100% nahi, sirf jitna text hai */
 }
 
 .create-account-link {
@@ -356,9 +380,13 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .modal-container {
-    max-width: 95%;
+  .login-register-prompt {
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 100%;
   }
+
 
   .login-card {
     flex-direction: column;
@@ -367,12 +395,16 @@
   }
 
   .login-left {
-    padding: 30px 20px;
-    min-height: 200px;
-    /* Ensure gradient is maintained on mobile */
-    background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%);
-  }
-
+  flex: 1;
+  background: linear-gradient(135deg, #ff5f6d, #ff8e53);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 2rem;
+}
   .login-title {
     font-size: 2rem;
     color: white; /* Maintain white text on mobile */
