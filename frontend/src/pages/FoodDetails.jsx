@@ -101,7 +101,7 @@ export default function FoodDetails() {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="h-12 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold transition-colors"
+                className="h-12 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold transition-colors cursor-pointer"
               >
                 Add to Cart
               </button>
@@ -111,7 +111,7 @@ export default function FoodDetails() {
                   handleAddToCart();
                   navigate("/cartpage");
                 }}
-                className="h-12 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold transition-colors"
+                className="h-12 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold transition-colors cursor-pointer"
               >
                 Buy Now
               </button>

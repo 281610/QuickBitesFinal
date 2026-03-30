@@ -105,7 +105,7 @@ export default function BuyerHome({ foods, onLogin, searchTerm = "" }) {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-xl font-bold text-green-600 text-center mb-20"
+          className="text-xl font-bold text-green-600 text-center mb-6"
         >
           🌍 Foods Near You
         </motion.h3>

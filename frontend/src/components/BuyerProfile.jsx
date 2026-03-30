@@ -143,7 +143,7 @@ export default function BuyerProfile() {
               <button
                 type="button"
                 onClick={() => setShowEditModal(true)}
-                className="mt-6 w-full bg-[#995014] hover:bg-[#7f4110] text-white text-xl font-semibold py-3.5 rounded-2xl transition-colors"
+                className="mt-6 w-full bg-[#995014] hover:bg-[#7f4110] text-white text-xl font-semibold py-3.5 rounded-2xl transition-colors cursor-pointer"
               >
                 Edit Profile
               </button>
@@ -155,14 +155,14 @@ export default function BuyerProfile() {
                 <button
                   type="button"
                   onClick={() => setShowSupportModal(true)}
-                  className="w-full text-left px-4 py-3 rounded-xl bg-[#faf7f3] hover:bg-[#f4ede6] text-[#5f493c] font-medium transition-colors"
+                  className="w-full text-left px-4 py-3 rounded-xl bg-[#faf7f3] hover:bg-[#f4ede6] text-[#5f493c] font-medium transition-colors cursor-pointer"
                 >
                   Help & Support
                 </button>
                 <button
                   type="button"
                   onClick={() => setUser(null)}
-                  className="w-full flex items-center gap-2 px-4 py-3 rounded-xl bg-[#fff3f1] hover:bg-[#ffe7e2] text-[#b1462a] font-semibold transition-colors"
+                  className="w-full flex items-center gap-2 px-4 py-3 rounded-xl bg-[#fff3f1] hover:bg-[#ffe7e2] text-[#b1462a] font-semibold transition-colors cursor-pointer"
                 >
                   <LogOut size={18} />
                   Logout
