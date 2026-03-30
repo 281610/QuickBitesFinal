@@ -204,20 +204,20 @@ export default function CartPage() {
                     <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-1">
                       <button
                         onClick={() => updateQuantity(item._id, getQuantity(item._id) - 1)}
-                        className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-600 hover:bg-gray-50"
+                        className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-600 hover:bg-gray-50 cursor-pointer"
                       >
                         −
                       </button>
                       <span className="text-sm font-medium w-8 text-center">{getQuantity(item._id)}</span>
                       <button
                         onClick={() => updateQuantity(item._id, getQuantity(item._id) + 1)}
-                        className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-600 hover:bg-gray-50"
+                        className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-gray-600 hover:bg-gray-50 cursor-pointer"
                       >
                         +
                       </button>
                     </div>
                     <div className="font-semibold text-gray-900">₹{item.price * getQuantity(item._id)}</div>
-                    <button onClick={() => removeFromCart(item._id)} className="text-gray-400 hover:text-red-500 p-1">
+                    <button onClick={() => removeFromCart(item._id)} className="text-gray-400 hover:text-red-500 p-1 cursor-pointer">
                       ✕
                     </button>
                   </div>
@@ -278,7 +278,7 @@ export default function CartPage() {
  <div className="flex justify-center">
   <button
       onClick={handleCheckout}
-    className="w-3/4 h-10 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg transition-colors"
+    className="w-3/4 h-10 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg transition-colors cursor-pointer"
   >
       {paymentMethod === "cod" ? "Place COD Order" : "Continue to Payment"}
   </button>

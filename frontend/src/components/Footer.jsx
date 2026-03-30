@@ -64,8 +64,8 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Contact</h4>
               <ul className="space-y-4 text-sm">
-                <li className="flex items-center gap-3"><MapPin size={16} className="text-orange-500" /> Delhi, India</li>
-                <li className="flex items-center gap-3"><Phone size={16} className="text-orange-500" /> +91 7743062799</li>
+                <li className="flex items-center gap-3"><MapPin size={16} className="text-orange-500" /> Punjab, India</li>
+                <li className="flex items-center gap-3"><Phone size={16} className="text-orange-500" /> +91 775485XXXX</li>
                 <li className="flex items-center gap-3"><Mail size={16} className="text-orange-500" /> support@quickbites.com</li>
               </ul>
             </div>

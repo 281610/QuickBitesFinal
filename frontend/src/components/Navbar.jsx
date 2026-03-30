@@ -43,7 +43,7 @@ function SearchInputBar({
         type="button"
         onClick={onVoiceToggle}
         disabled={!speechSupported}
-        className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors ${
+        className={`absolute right-4 top-1/2 -translate-y-1/2 transition-colors cursor-pointer ${
           isListening ? "text-orange-500" : "text-gray-500 hover:text-gray-700"
         } ${!speechSupported ? "opacity-50 cursor-not-allowed" : ""}`}
         aria-label="Voice search"
@@ -253,7 +253,7 @@ export default function Navbar() {
                           setShowLogin(true);
                           setDesktopDropdownOpen(false);
                         }}
-                        className="w-full text-center px-6 py-4 text-lg hover:bg-gray-100 border-b border-gray-200"
+                        className="w-full text-center px-6 py-4 text-lg hover:bg-gray-100 border-b border-gray-200 cursor-pointer"
                       >
                         Login / Sign Up
                       </button>
@@ -262,10 +262,19 @@ export default function Navbar() {
                     <div className="flex flex-col text-center space-y-3 py-4">
                       {user.role === "buyer" ? (
                         <>
-                          <Link to="/Profile" className="flex items-center justify-center gap-2 px-6 py-3 text-lg hover:bg-gray-100">
+                          <Link 
+                            to="/Profile" 
+                            onClick={() => setDesktopDropdownOpen(false)}
+                            className="flex items-center justify-center gap-2 px-6 py-3 text-lg hover:bg-gray-100"
+                          >
                             <User size={20} /> My Profile
                           </Link>
-                          <Link to="/profile?tab=orders" className="flex items-center justify-center gap-2 px-6 py-3 text-lg hover:bg-gray-100">
+
+                          <Link 
+                            to="/profile?tab=orders" 
+                            onClick={() => setDesktopDropdownOpen(false)}
+                            className="flex items-center justify-center gap-2 px-6 py-3 text-lg hover:bg-gray-100"
+                          >
                             <ShoppingBag size={20} /> Orders
                           </Link>
                           <Link

@@ -70,7 +70,7 @@ export default function Wishlist() {
                       <button
                         type="button"
                         onClick={() => addToCart(food)}
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#1e40af] text-white hover:bg-[#1d4ed8] transition-colors"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#1e40af] text-white hover:bg-[#1d4ed8] transition-colors cursor-pointer"
                       >
                         <ShoppingCart size={16} />
                         Add

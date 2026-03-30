@@ -39,7 +39,7 @@ export default function FoodCard({ food, onAdd }) {
             e.stopPropagation()
             toggleWishlist(food)
           }}
-          className={`absolute top-5 right-5 z-10 h-9 w-9 rounded-full backdrop-blur-sm border transition-colors flex items-center justify-center ${
+          className={`absolute top-5 right-5 z-10 h-9 w-9 rounded-full backdrop-blur-sm border transition-colors flex items-center justify-center cursor-pointer ${
             wishlisted
               ? "bg-rose-500 text-white border-rose-500"
               : "bg-white/90 text-gray-700 border-white hover:bg-white"
@@ -55,7 +55,6 @@ export default function FoodCard({ food, onAdd }) {
         </div>
       </div>
 
-      {/* 2. Content Section - Yahan humne Padding badhayi hai */}
       <div className="px-4 sm:px-6 py-4 sm:py-5 flex flex-col flex-grow">
         <h3 className="font-extrabold text-lg sm:text-xl text-gray-800 line-clamp-1 mb-1">
           {food.name}
@@ -77,7 +76,7 @@ export default function FoodCard({ food, onAdd }) {
               e.stopPropagation();
               if (onAdd) onAdd();
             }}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-sm transition-all hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-100"
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-sm transition-all hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-100 cursor-pointer"
           >
             <Plus size={18} strokeWidth={3} />
             ADD

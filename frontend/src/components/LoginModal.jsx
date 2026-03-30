@@ -595,7 +595,7 @@ import { useAuth } from "../context/AuthContext"
 import { useToast } from "../context/ToastContext"
 import "./LoginModal.css" // ✅ import css file
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://quickbitesfinal-2.onrender.com").replace(/\/$/, "")
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000").replace(/\/$/, "")
 
 export default function LoginModal({ onClose }) {
   const { setUser } = useAuth()

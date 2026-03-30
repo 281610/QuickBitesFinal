@@ -154,7 +154,7 @@ export default function FoodDetails() {
                 <button
                   type="button"
                   onClick={() => setActiveTag("description")}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${
                     activeTag === "description" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
                   }`}
                 >
@@ -164,7 +164,7 @@ export default function FoodDetails() {
                   type="button"
                   onClick={() => setActiveTag("details")}
                   className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                    activeTag === "details" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
+                    activeTag === "details" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 cursor-pointer"
                   }`}
                 >
                   Product Details
