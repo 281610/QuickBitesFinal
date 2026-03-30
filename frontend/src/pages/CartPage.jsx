@@ -2,6 +2,9 @@
 
 import { useCart } from "../context/CartContext"
 import { useState } from "react" 
+import { useAuth } from "../context/AuthContext"
+import { useToast } from "../context/ToastContext"
+import { apiUrl } from "../config/api"
 
 
 
@@ -17,7 +20,10 @@ function loadScript(src) {
 
 export default function CartPage() {
   const { cart, removeFromCart, total, clearCart } = useCart()
+  const { user } = useAuth()
+  const { showToast } = useToast()
   const [quantities, setQuantities] = useState({})
+  const [paymentMethod, setPaymentMethod] = useState("online")
 
   const updateQuantity = (itemId, newQuantity) => {
     if (newQuantity < 1) return
@@ -39,14 +45,19 @@ export default function CartPage() {
   }
 
   async function handlePayment() {
+    if (!user?._id) {
+      showToast("Please login to place order", "info")
+      return
+    }
+
     const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js")
     if (!res) {
-      alert("Razorpay SDK failed to load.")
+      showToast("Razorpay SDK failed to load.", "error")
       return
     }
 
     const finalTotal = calculateTotal()
-    const orderRes = await fetch("https://quickbitesfinal-2.onrender.com/api/payment/create-order", {
+    const orderRes = await fetch(apiUrl("/api/payment/create-order"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: finalTotal }),
@@ -54,7 +65,7 @@ export default function CartPage() {
     const order = await orderRes.json()
 
     if (!order) {
-      alert("Server error. Order not created.")
+      showToast("Server error. Order not created.", "error")
       return
     }
 
@@ -66,26 +77,30 @@ export default function CartPage() {
       description: "Cart Payment",
       order_id: order.id,
       handler: async (response) => {
-        const foodIds = cart.map((item) => item._id)
+        const items = cart.map((item) => ({
+          foodId: item._id,
+          quantity: getQuantity(item._id),
+        }))
 
-        const verifyRes = await fetch("https://quickbitesfinal-2.onrender.com/api/payment/verify", {
+        const verifyRes = await fetch(apiUrl("/api/payment/verify"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             order_id: response.razorpay_order_id,
             payment_id: response.razorpay_payment_id,
             signature: response.razorpay_signature,
-            foodIds,
+            buyerId: user._id,
+            items,
           }),
         })
 
         const verifyData = await verifyRes.json()
 
         if (verifyData.status === "success") {
-          alert("✅ Payment Successful & Foods Deleted!")
+          showToast("Payment successful", "success")
           clearCart()
         } else {
-          alert("❌ Payment verification failed")
+          showToast("Payment verification failed", "error")
         }
       },
       prefill: {
@@ -98,6 +113,52 @@ export default function CartPage() {
 
     const paymentObject = new window.Razorpay(options)
     paymentObject.open()
+  }
+
+  async function handleCODOrder() {
+    if (!user?._id) {
+      showToast("Please login to place COD order", "info")
+      return
+    }
+
+    try {
+      const orderPromises = cart.map((item) => {
+        const quantity = getQuantity(item._id)
+        return fetch(apiUrl("/api/order"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            buyerId: user._id,
+            foodId: item._id,
+            quantity,
+            paymentMethod: "cod",
+          }),
+        })
+      })
+
+      const responses = await Promise.all(orderPromises)
+      const hasFailure = responses.some((res) => !res.ok)
+
+      if (hasFailure) {
+        showToast("Some items could not be ordered. Please try again.", "error")
+        return
+      }
+
+      clearCart()
+      showToast("Order placed successfully with Cash on Delivery", "success")
+    } catch (error) {
+      console.error("COD order error:", error)
+      showToast("Failed to place COD order", "error")
+    }
+  }
+
+  function handleCheckout() {
+    if (paymentMethod === "cod") {
+      handleCODOrder()
+      return
+    }
+
+    handlePayment()
   }
 
   // Empty cart UI
@@ -168,6 +229,33 @@ export default function CartPage() {
          {/* Payment Section - Desktop only */}
 <div className="hidden lg:block w-full lg:w-2/5 p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-lg">
   <h2 className="text-lg font-semibold text-gray-900 mb-6">Payment Details</h2>
+
+  <div className="mb-6 p-4 bg-white rounded-lg border border-gray-200">
+    <p className="text-sm font-semibold text-gray-800 mb-3">Payment Method</p>
+    <div className="space-y-2">
+      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="online"
+          checked={paymentMethod === "online"}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        />
+        Online Payment (Razorpay)
+      </label>
+      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="cod"
+          checked={paymentMethod === "cod"}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        />
+        Cash on Delivery (COD)
+      </label>
+    </div>
+  </div>
+
   <div className="space-y-4 mb-6">
     <div className="flex justify-between text-sm">
       <span className="text-gray-600">Subtotal</span>
@@ -189,10 +277,10 @@ export default function CartPage() {
   </div>
  <div className="flex justify-center">
   <button
-    onClick={handlePayment}
+      onClick={handleCheckout}
     className="w-3/4 h-10 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg transition-colors"
   >
-    Continue to Payment
+      {paymentMethod === "cod" ? "Place COD Order" : "Continue to Payment"}
   </button>
 </div>
 
@@ -202,6 +290,32 @@ export default function CartPage() {
 {/* ✅ Mobile Fixed Payment Footer (above footer) */}
 <div className="lg:hidden fixed bottom-16 left-0 right-0 bg-gray-50 border-t border-gray-300 shadow-lg p-4 rounded-t-xl flex flex-col items-center">
   <h2 className="text-base font-semibold text-gray-900 mb-3">Payment Details</h2>
+
+  <div className="w-full px-4 mb-4 p-3 bg-white rounded-lg border border-gray-200">
+    <p className="text-sm font-semibold text-gray-800 mb-2">Payment Method</p>
+    <div className="space-y-2">
+      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethodMobile"
+          value="online"
+          checked={paymentMethod === "online"}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        />
+        Online Payment
+      </label>
+      <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethodMobile"
+          value="cod"
+          checked={paymentMethod === "cod"}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        />
+        Cash on Delivery
+      </label>
+    </div>
+  </div>
   
   <div className="space-y-2 mb-4 text-sm w-full px-4">
     <div className="flex justify-between">
@@ -224,10 +338,10 @@ export default function CartPage() {
   </div>
 
   <button
-    onClick={handlePayment}
+    onClick={handleCheckout}
     className="w-3/4 h-12 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg transition-colors"
   >
-    Continue to Payment
+    {paymentMethod === "cod" ? "Place COD Order" : "Continue to Payment"}
   </button>
 </div>
 

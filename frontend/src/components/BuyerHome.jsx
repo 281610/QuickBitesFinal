@@ -1,13 +1,17 @@
 "use client"
 
 import { useAuth } from "../context/AuthContext"
+import { useCart } from "../context/CartContext"
 import FoodCard from "./FoodCard"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import Banner from "./Banner"
+import { useToast } from "../context/ToastContext"
 
-export default function BuyerHome({ foods, onLogin }) {
+export default function BuyerHome({ foods, onLogin, searchTerm = "" }) {
   const { user } = useAuth()
+  const { addToCart } = useCart()
+  const { showToast } = useToast()
 
   const [locationText, setLocationText] = useState("your area")
   const [nearbyFoods, setNearbyFoods] = useState([])
@@ -53,9 +57,23 @@ export default function BuyerHome({ foods, onLogin }) {
   }, [])
 
   function handleAdd(food) {
-    if (!user) onLogin()
-    else alert(`Added ${food.name} to cart (demo)`)
+    if (!user) {
+      onLogin()
+      return
+    }
+
+    addToCart(food)
+    showToast(`${food.name} added to cart`, "success")
   }
+
+  const filteredNearbyFoods = useMemo(() => {
+    if (!searchTerm) return nearbyFoods
+
+    return nearbyFoods.filter((food) => {
+      const searchable = `${food?.name || ""} ${food?.description || ""} ${food?.type || ""}`.toLowerCase()
+      return searchable.includes(searchTerm)
+    })
+  }, [nearbyFoods, searchTerm])
 
   return (
     <motion.div
@@ -67,66 +85,30 @@ export default function BuyerHome({ foods, onLogin }) {
       {/* 👇 Banner */}
       <Banner />
 
-      <div className="p-8">
-        {/* Heading */}
-        <motion.h2
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-2xl font-bold mb-6 text-center text-gray-900"
-        >
-          🍲 Homemade Food in <span className="text-blue-600">{locationText}</span>
-        </motion.h2>
+<div className="px-4 sm:px-6 lg:px-8 pb-8">
+    {/* Heading */}
+    {!searchTerm && (
+      <motion.h2
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="text-2xl font-bold mb-6 text-center text-gray-900"
+      >
+        🍲 Homemade Food in <span className="text-blue-600">{locationText}</span>
+      </motion.h2>
+    )}
 
-        {/* Nearby Foods */}
-        {!loadingNearby && nearbyFoods.length > 0 && (
-          <div className="mb-10 ">
-            <motion.h3
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-xl font-bold text-green-600 mb-6 text-center mb-20"
-            >
-              🌍 Foods Near You
-            </motion.h3>
-
-            <motion.div
-              initial="hidden"
-              animate="show"
-              variants={{
-                hidden: { opacity: 0 },
-                show: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.1 },
-                },
-              }}
-              className="flex flex-wrap justify-center gap-4"
-            >
-              {nearbyFoods.map((f) => (
-                <motion.div
-                  key={f._id}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0 },
-                  }}
-                  className="w-[47%] sm:w-[45%] lg:w-[22%] max-w-xs"
-                >
-                  <FoodCard food={f} onAdd={() => handleAdd(f)} />
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        )}
-
-        {/* All foods */}
-        <motion.h2
-          initial={{ opacity: 0, x: 50 }}
+    {/* Nearby Foods */}
+    {!searchTerm && !loadingNearby && filteredNearbyFoods.length > 0 && (
+      <div className="mb-10 ">
+        <motion.h3
+          initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-2xl font-bold text-gray-900 mb-6 text-center"
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="text-xl font-bold text-green-600 text-center mb-20"
         >
-          🍴 Available Foods
-        </motion.h2>
+          🌍 Foods Near You
+        </motion.h3>
 
         <motion.div
           initial="hidden"
@@ -138,26 +120,64 @@ export default function BuyerHome({ foods, onLogin }) {
               transition: { staggerChildren: 0.1 },
             },
           }}
-          className="flex flex-wrap justify-center gap-4 "
+          className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
         >
-          {foods.length === 0 ? (
-            <p className="text-gray-500">No foods available</p>
-          ) : (
-            foods.map((f) => (
-              <motion.div
-                key={f._id}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  show: { opacity: 1, y: 0 },
-                }}
-                className="w-[47%] sm:w-[45%] lg:w-[22%] max-w-xs"
-              >
-                <FoodCard food={f} onAdd={() => handleAdd(f)} />
-              </motion.div>
-            ))
-          )}
+          {filteredNearbyFoods.map((f) => (
+            <motion.div
+              key={f._id}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                show: { opacity: 1, y: 0 },
+              }}
+              className="w-full"
+            >
+              <FoodCard food={f} onAdd={() => handleAdd(f)} />
+            </motion.div>
+          ))}
         </motion.div>
       </div>
+    )}
+
+    {/* All foods */}
+    <motion.h2
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.4, duration: 0.5 }}
+      className="text-2xl font-bold text-gray-900 mb-6 text-center"
+    >
+      {searchTerm ? `Search results for "${searchTerm}"` : "🍴 Available Foods"}
+    </motion.h2>
+
+    <motion.div
+      initial="hidden"
+      animate="show"
+      variants={{
+        hidden: { opacity: 0 },
+        show: {
+          opacity: 1,
+          transition: { staggerChildren: 0.1 },
+        },
+      }}
+      className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
+    >
+      {foods.length === 0 ? (
+        <p className="text-gray-500 text-lg font-medium">{searchTerm ? "No match found" : "No foods available"}</p>
+      ) : (
+        foods.map((f) => (
+          <motion.div
+            key={f._id}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0 },
+            }}
+            className="w-full"
+          >
+            <FoodCard food={f} onAdd={() => handleAdd(f)} />
+          </motion.div>
+        ))
+      )}
     </motion.div>
+  </div>
+</motion.div>
   )
 }

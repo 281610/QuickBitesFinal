@@ -9,41 +9,18 @@ export default function Profile() {
 
   if (!user)
     return (
-      <p
-        style={{
-          padding: "16px",
-          textAlign: "center",
-          fontSize: "16px",
-          color: "#374151",
-        }}
-      >
-        Please login to view profile
-      </p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-center">
+          <p className="text-2xl font-bold text-gray-800 mb-2">Access Denied</p>
+          <p className="text-lg text-gray-600">Please login to view your profile</p>
+        </div>
+      </div>
     )
 
   return (
-    <div
-      className="profile-container"
-      style={{
-        padding: "16px",
-        maxWidth: "1000px",
-        margin: "0 auto",
-        boxSizing: "border-box",
-      }}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {user.role === "buyer" && <BuyerProfile />}
       {user.role === "seller" && <SellerPanel />}
-
-      <style jsx>{`
-        .profile-container {
-          padding: 16px;
-        }
-        @media (max-width: 768px) {
-          .profile-container {
-            padding: 12px;
-          }
-        }
-      `}</style>
     </div>
   )
 }

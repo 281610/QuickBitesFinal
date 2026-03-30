@@ -592,10 +592,14 @@ export default function LoginModal({ onClose }) {
 
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
+import { useToast } from "../context/ToastContext"
 import "./LoginModal.css" // ✅ import css file
+
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000").replace(/\/$/, "")
 
 export default function LoginModal({ onClose }) {
   const { setUser } = useAuth()
+  const { showToast } = useToast()
   const [isRegister, setIsRegister] = useState(false)
   const [form, setForm] = useState({
     name: "",
@@ -616,16 +620,16 @@ export default function LoginModal({ onClose }) {
 
   // 🔹 Send OTP
   async function handleSendOtp() {
-    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/auth/send-otp", {
+    const res = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: form.email }),
     })
     const data = await res.json()
     if (data.error) {
-      alert(data.error)
+      showToast(data.error, "error")
     } else {
-      alert("OTP sent to your email")
+      showToast("OTP sent to your email", "success")
       setOtpSent(true)
     }
   }
@@ -633,16 +637,17 @@ export default function LoginModal({ onClose }) {
   // 🔹 Verify OTP
   async function handleVerifyOtp(e) {
     e.preventDefault()
-    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/auth/verify-otp", {
+    const res = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: form.email, otp }),
     })
     const data = await res.json()
     if (data.error) {
-      alert(data.error)
+      showToast(data.error, "error")
     } else {
       setUser(data.user)
+      showToast("Logged in successfully", "success")
       onClose()
     }
   }
@@ -670,7 +675,7 @@ export default function LoginModal({ onClose }) {
       headers["Content-Type"] = "application/json"
     }
 
-    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/auth/register", {
+    const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: "POST",
       headers,
       body,
@@ -678,9 +683,9 @@ export default function LoginModal({ onClose }) {
 
     const data = await res.json()
     if (data.error) {
-      alert(data.error)
+      showToast(data.error, "error")
     } else {
-      alert("✅ Registered successfully! Now login with OTP")
+      showToast("Registered successfully. Now login with OTP", "success")
       setIsRegister(false) // switch to login
     }
   }

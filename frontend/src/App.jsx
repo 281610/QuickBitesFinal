@@ -1,15 +1,46 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import FoodDetails from "./pages/FoodDetails";
 import CartPage from "./pages/CartPage";
+import Wishlist from "./pages/Wishlist";
 import CookieConsent from "react-cookie-consent";
 import { initPush } from "./utils/pushNotifications";
 import { useEffect } from "react";
 import Banner from "./components/Banner";
+import { useAuth } from "./context/AuthContext";
 // import Help from "./components/help";
 import Footer from "./components/Footer";
+
+function AppShell() {
+  const location = useLocation();
+  const { user } = useAuth();
+
+  const hideFooterForSellerProfile = location.pathname === "/profile" && user?.role === "seller";
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/food/:id" element={<FoodDetails />} />
+          <Route path="/cartpage" element={<CartPage />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/banner" element={<Banner />} />
+          <Route path="/profile" element={<Profile />} />
+           <Route path="/SellerDashboard" element={<Navigate to="/profile?tab=seller-dashboard" replace />} />
+           <Route path="/SellerOrders" element={<Navigate to="/profile?tab=seller-orders" replace />} />
+           <Route path="/AddProduct" element={<Navigate to="/profile?tab=seller-add-product" replace />} />
+           {/* <Route path="/Help" element={<Help />} /> */}
+        </Routes>
+      </main>
+      {!hideFooterForSellerProfile && <Footer />}
+    </div>
+  );
+}
 
 export default function App() {
   useEffect(() => {
@@ -19,16 +50,7 @@ export default function App() {
   return (
     <>
       <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/food/:id" element={<FoodDetails />} />
-          <Route path="/cartpage" element={<CartPage />} />
-          <Route path="/banner" element={<Banner />} />
-          <Route path="/profile" element={<Profile />} />
-           {/* <Route path="/Help" element={<Help />} /> */}
-        </Routes>
-        <Footer />
+        <AppShell />
       </BrowserRouter>
 
       <CookieConsent

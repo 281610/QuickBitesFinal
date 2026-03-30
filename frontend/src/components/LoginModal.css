@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* semi-transparent dark overlay */
+  background: rgba(20, 14, 10, 0.62);
   backdrop-filter: blur(6px); /* <-- this adds blur to background */
   -webkit-backdrop-filter: blur(6px); /* for Safari */
   display: flex;
@@ -33,7 +33,7 @@
   overflow: hidden;
   min-height: 500px;
   max-height: 90vh; /* Added max-height to ensure it doesn't exceed screen height */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
   position: relative; /* Added relative positioning for close button */
 }
 
@@ -72,7 +72,7 @@
 /* Branding Left Section */
 .login-left {
   flex: 1;
-  background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%);
+  background: linear-gradient(145deg, #b5642f 0%, #8f4517 46%, #6c2f11 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -337,7 +337,7 @@
 }
 
 .login-button {
-  background: linear-gradient(135deg, #ff7b54 0%, #ff6b9d 100%);
+  background: linear-gradient(145deg, #b5642f 0%, #8f4517 100%);
   color: white; /* Explicitly set white text on gradient button */
   border: none;
   padding: 14px 24px;
