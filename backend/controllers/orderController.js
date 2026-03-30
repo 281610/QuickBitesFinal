@@ -26,7 +26,7 @@ import Food from "../models/Food.js";
 */
 export const placeOrder = async (req, res) => {
   try {
-    const { buyerId, foodId, quantity } = req.body;
+    const { buyerId, foodId, quantity = 1, paymentMethod = "online" } = req.body;
 
     // 1. Check if food exists
     const food = await Food.findById(foodId);
@@ -40,17 +40,23 @@ export const placeOrder = async (req, res) => {
     }
 
     // 3. Create order
+    const qty = Number(quantity) || 1;
+    const unitPrice = Number(food.price) || 0;
     const order = new Order({
       buyer: buyerId,
       food: foodId,
-      quantity,
+      foodName: food.name,
+      quantity: qty,
+      unitPrice,
+      totalAmount: unitPrice * qty,
+      paymentMethod,
       status: "pending",
     });
     await order.save();
 
     // 4. Decrease stock instead of deleting
     if (food.stock !== undefined) {
-      food.stock -= quantity;
+      food.stock -= qty;
       await food.save();
     }
 
@@ -70,9 +76,44 @@ export const getBuyerOrders = async (req, res) => {
       .populate("food")
       .sort({ createdAt: -1 });
 
-    res.json(orders);
+    const normalizedOrders = orders.map((order) => {
+      const totalAmount =
+        order.totalAmount && order.totalAmount > 0
+          ? order.totalAmount
+          : (order.food?.price || order.unitPrice || 0) * (order.quantity || 1);
+
+      return {
+        ...order.toObject(),
+        totalAmount,
+      };
+    });
+
+    res.json(normalizedOrders);
   } catch (err) {
     console.error("❌ Get Orders Error:", err);
     res.status(500).json({ error: "Failed to fetch orders" });
+  }
+};
+
+export const getSellerOrders = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const sellerFoods = await Food.find({ seller: sellerId }).select("_id");
+    const foodIds = sellerFoods.map((item) => item._id);
+
+    if (foodIds.length === 0) {
+      return res.json([]);
+    }
+
+    const orders = await Order.find({ food: { $in: foodIds } })
+      .populate("food")
+      .populate("buyer", "name email contact")
+      .sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (err) {
+    console.error("❌ Get Seller Orders Error:", err);
+    res.status(500).json({ error: "Failed to fetch seller orders" });
   }
 };

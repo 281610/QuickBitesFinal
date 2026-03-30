@@ -14,9 +14,8 @@ export default router;
 
 import express from "express";
 import multer from "multer";
-import { registerUser, loginUser } from "../controllers/authController.js";
+import { registerUser, loginUser, updateProfile } from "../controllers/authController.js";
 import { sendOtp, verifyOtp } from "../controllers/authController.js";
-import { transporter } from "../utils/mailer.js";
 
 const router = express.Router();
 
@@ -26,5 +25,6 @@ router.post("/register", upload.single("photo"), registerUser);
 router.post("/login", loginUser);
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
+router.post("/update-profile", updateProfile);
 
 export default router;

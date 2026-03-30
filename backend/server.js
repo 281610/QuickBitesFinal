@@ -175,17 +175,26 @@ app.use("/api/location", locationRoutes);
 app.use("/api/payment", paymentRoutes);
 
 // ---------------- WEB-PUSH CONFIG ----------------
-webpush.setVapidDetails(
-  "mailto:your-email@example.com",
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY
-);
+const hasVapidConfig = Boolean(process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY);
+
+if (hasVapidConfig) {
+  webpush.setVapidDetails(
+    "mailto:your-email@example.com",
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+} else {
+  console.warn("⚠️ VAPID keys are missing. Push notifications are disabled.");
+}
 
 // In-memory storage for now (use MongoDB in real project)
 let subscriptions = [];
 
 // ✅ Route: frontend fetches public VAPID key
 app.get("/api/vapidPublicKey", (req, res) => {
+  if (!process.env.VAPID_PUBLIC_KEY) {
+    return res.status(503).json({ error: "Push notifications are not configured" });
+  }
   res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
 });
 
@@ -198,6 +207,10 @@ app.post("/api/subscribe", (req, res) => {
 
 // ✅ Route: send test notification
 app.post("/api/notify", async (req, res) => {
+  if (!hasVapidConfig) {
+    return res.status(503).json({ error: "Push notifications are not configured" });
+  }
+
   const payload = JSON.stringify({
     title: "🍔 New Food Available!",
     body: "Check out the latest food item 🚀",
