@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import Banner from "./components/Banner";
 import { useAuth } from "./context/AuthContext";
 // import Help from "./components/help";
+import ScrollToTop from "./components/ScrollToTop";
 import Footer from "./components/Footer";
 
 function AppShell() {
@@ -22,9 +23,11 @@ function AppShell() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-1">
         <Routes>
+         
           <Route path="/" element={<Home />} />
           <Route path="/food/:id" element={<FoodDetails />} />
           <Route path="/cartpage" element={<CartPage />} />
@@ -52,7 +55,7 @@ export default function App() {
       <BrowserRouter>
         <AppShell />
       </BrowserRouter>
-
+     
       <CookieConsent
         location="bottom"
         buttonText="Accept All"
