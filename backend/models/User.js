@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
  
   role: { type: String, enum: ["buyer", "seller"], default: "buyer" },
   contact: { type: String, required: true },
+  otp: { type: String },
+  otpExpires: { type: Date },
 
   // Buyer fields
   address: String,

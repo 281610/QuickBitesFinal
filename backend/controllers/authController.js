@@ -63,7 +63,7 @@ export const registerUser = async (req, res) => {
 
     const user = new User({
       name,
-      email,
+      email: email.toLowerCase(),
       role,
       contact,
       address,
@@ -95,23 +95,27 @@ export const loginUser = async (req, res) => {
   }
 };
 
-const otpStore = {}; // { email: { code, expiresAt } }
-
 export const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) return res.status(400).json({ error: "User not found" });
 
     // generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore[email] = {
-      code: otp,
-      expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
-    };
+    
+    // Hash OTP before saving
+    const salt = await bcrypt.genSalt(10);
+    const hashedOtp = await bcrypt.hash(otp, salt);
 
-    console.log(`Generated OTP for ${email}: ${otp}`); // 🔎 dev log
+    user.otp = hashedOtp;
+    user.otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+    await user.save();
+
+    console.log(`Generated OTP for ${normalizedEmail}: ${otp}`); // 🔎 dev log
 
     // send email
     const transporter = nodemailer.createTransport({
@@ -121,13 +125,13 @@ export const sendOtp = async (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
       tls: {
-        rejectUnauthorized: false, // 👈 allow self-signed certs
+        rejectUnauthorized: false,
       },
     });
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: email,
+      to: normalizedEmail,
       subject: "Your Login OTP - QuickBites",
       text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
     });
@@ -138,24 +142,40 @@ export const sendOtp = async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP" });
   }
 };
+
 export const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
+    if (!email || !otp) return res.status(400).json({ error: "Email and OTP are required" });
 
-    const record = otpStore[email];
+    const normalizedEmail = email.toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
-    if (record && record.code === otp && record.expiresAt > Date.now()) {
-      delete otpStore[email];
-
-      const user = await User.findOne({ email });
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
-
-      return res.json({ message: "Login successful", token, user });
-    } else {
-      return res.status(400).json({ error: "Invalid or expired OTP" });
+    if (!user) return res.status(400).json({ error: "User not found" });
+    if (!user.otp || !user.otpExpires) return res.status(400).json({ error: "No OTP requested for this user" });
+    
+    if (user.otpExpires < new Date()) {
+      user.otp = undefined;
+      user.otpExpires = undefined;
+      await user.save();
+      return res.status(400).json({ error: "OTP expired" });
     }
+
+    const isMatch = await bcrypt.compare(otp, user.otp);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    // Clear OTP after successful verification
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.json({ message: "Login successful", token, user });
   } catch (err) {
     console.error("Verify OTP Error:", err);
     res.status(500).json({ error: "Failed to verify OTP" });
