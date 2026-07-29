@@ -4,6 +4,14 @@ import SellerPanel from "../components/SellerPanel";
 import { useAuth } from "../context/AuthContext";
 import LoginModal from "../components/LoginModal";
 
+function normalizeSearchText(text = "") {
+  return text
+    .toLowerCase()
+    .replace(/[.,!?;:।॥]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export default function Home() {
   const { user } = useAuth();
   const [foods, setFoods] = useState([]);
@@ -58,7 +66,8 @@ export default function Home() {
 
 
 /*
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import BuyerHome from "../components/BuyerHome";
 import SellerPanel from "../components/SellerPanel";
 import { useAuth } from "../context/AuthContext";
@@ -66,8 +75,21 @@ import LoginModal from "../components/LoginModal";
 
 export default function Home() {
   const { user } = useAuth();
+  const location = useLocation();
   const [foods, setFoods] = useState([]);
   const [showLogin, setShowLogin] = useState(false);
+
+  const searchTerm = useMemo(() => {
+    return normalizeSearchText(new URLSearchParams(location.search).get("q") || "");
+  }, [location.search]);
+
+  const filteredFoods = useMemo(() => {
+    if (!searchTerm) return foods;
+    return foods.filter((food) => {
+      const searchable = normalizeSearchText(`${food?.name || ""} ${food?.description || ""} ${food?.type || ""}`);
+      return searchable.includes(searchTerm);
+    });
+  }, [foods, searchTerm]);
 
   // ✅ Fetch foods depending on location
   useEffect(() => {
@@ -154,9 +176,9 @@ export default function Home() {
 
   return (
     <div style={{ padding: "0", margin: "0" }}>
-      {!user && <BuyerHome foods={foods} onLogin={() => setShowLogin(true)} />}
+      {!user && <BuyerHome foods={filteredFoods} searchTerm={searchTerm} onLogin={() => setShowLogin(true)} />}
       {user?.role === "buyer" && (
-        <BuyerHome foods={foods} onLogin={() => setShowLogin(true)} />
+        <BuyerHome foods={filteredFoods} searchTerm={searchTerm} onLogin={() => setShowLogin(true)} />
       )}
       {user?.role === "seller" && <SellerPanel />}
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
@@ -164,7 +186,8 @@ export default function Home() {
   );
 }
 */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import BuyerHome from "../components/BuyerHome";
 import SellerPanel from "../components/SellerPanel";
 import { useAuth } from "../context/AuthContext";
@@ -172,8 +195,21 @@ import LoginModal from "../components/LoginModal";
 
 export default function Home() {
   const { user } = useAuth();
+  const location = useLocation();
   const [foods, setFoods] = useState([]);
   const [showLogin, setShowLogin] = useState(false);
+
+  const searchTerm = useMemo(() => {
+    return (new URLSearchParams(location.search).get("q") || "").trim().toLowerCase();
+  }, [location.search]);
+
+  const filteredFoods = useMemo(() => {
+    if (!searchTerm) return foods;
+    return foods.filter((food) => {
+      const searchable = `${food?.name || ""} ${food?.description || ""} ${food?.type || ""}`.toLowerCase();
+      return searchable.includes(searchTerm);
+    });
+  }, [foods, searchTerm]);
 
   // Get coords once and stash for BuyerHome
   useEffect(() => {
@@ -212,9 +248,9 @@ export default function Home() {
         boxSizing: "border-box",
       }}
     >
-      {!user && <BuyerHome foods={foods} onLogin={() => setShowLogin(true)} />}
+      {!user && <BuyerHome foods={filteredFoods} searchTerm={searchTerm} onLogin={() => setShowLogin(true)} />}
       {user?.role === "buyer" && (
-        <BuyerHome foods={foods} onLogin={() => setShowLogin(true)} />
+        <BuyerHome foods={filteredFoods} searchTerm={searchTerm} onLogin={() => setShowLogin(true)} />
       )}
       {user?.role === "seller" && <SellerPanel />}
 

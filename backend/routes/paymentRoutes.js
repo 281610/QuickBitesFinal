@@ -57,6 +57,7 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import dotenv from "dotenv";
 import Food from "../models/Food.js"; // ✅ Food model
+import Order from "../models/Order.js";
 
 dotenv.config();
 
@@ -83,20 +84,53 @@ router.post("/create-order", async (req, res) => {
   }
 });
 
-// ✅ Verify + delete multiple foods
+// ✅ Verify payment + persist orders for online checkout
 router.post("/verify", async (req, res) => {
   try {
-    const { order_id, payment_id, signature, foodIds } = req.body;
+    const { order_id, payment_id, signature, items = [], buyerId } = req.body;
 
     const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
     shasum.update(order_id + "|" + payment_id);
     const digest = shasum.digest("hex");
 
     if (digest === signature) {
-      // 🟢 Delete all purchased food items
-      await Food.deleteMany({ _id: { $in: foodIds } });
+      if (!buyerId || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ status: "failed", message: "Invalid order payload" });
+      }
 
-      return res.json({ status: "success", message: "Payment verified & foods deleted" });
+      for (const item of items) {
+        const foodId = item?.foodId;
+        const quantity = Number(item?.quantity) || 1;
+
+        if (!foodId) continue;
+
+        const food = await Food.findById(foodId);
+        if (!food) continue;
+
+        if (food.stock !== undefined && food.stock < quantity) {
+          return res.status(400).json({ status: "failed", message: `Not enough stock for ${food.name}` });
+        }
+
+        const unitPrice = Number(food.price) || 0;
+
+        await Order.create({
+          buyer: buyerId,
+          food: foodId,
+          foodName: food.name,
+          quantity,
+          unitPrice,
+          totalAmount: unitPrice * quantity,
+          paymentMethod: "online",
+          status: "completed",
+        });
+
+        if (food.stock !== undefined) {
+          food.stock -= quantity;
+          await food.save();
+        }
+      }
+
+      return res.json({ status: "success", message: "Payment verified and orders saved" });
     } else {
       return res.status(400).json({ status: "failed", message: "Invalid signature" });
     }

@@ -161,9 +161,12 @@ export default function AddFoodModal({ onClose }) {
 
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+import { apiUrl } from "../config/api";
 
 export default function AddFoodModal({ onClose }) {
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [form, setForm] = useState({
     name: "",
     type: "veg",
@@ -210,135 +213,128 @@ export default function AddFoodModal({ onClose }) {
     images.forEach((file) => fd.append("images", file));
     fd.append("seller", user?._id);
 
-    const res = await fetch("https://quickbitesfinal-2.onrender.com/api/food", {
+    const res = await fetch(apiUrl("/api/food"), {
       method: "POST",
       body: fd,
     });
 
     if (res.ok) {
-      alert("✅ Food added successfully!");
+      showToast("Food added successfully", "success");
       onClose();
     } else {
       const err = await res.json();
-      alert("❌ Error: " + err.error);
+      showToast(err?.error || "Unable to add food", "error");
     }
   }
 
   return (
     <div
-      onClick={onClose} // ✅ close when clicking outside
-      style={{
-        position: "fixed",
-        inset: 0,
-        backdropFilter: "blur(6px)", // ✅ blur background
-        backgroundColor: "rgba(0,0,0,0.4)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1000,
-      }}
+      onClick={onClose}
+      className="fixed inset-0 z-[90] bg-[#140f0a]/60 backdrop-blur-md flex items-center justify-center p-4"
     >
       <div
-        onClick={(e) => e.stopPropagation()} // ✅ prevent closing when clicking inside modal
-        style={{
-          backgroundColor: "white",
-          padding: "24px",
-          borderRadius: "12px",
-          width: "380px",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.2)", // ✅ nice shadow
-          animation: "fadeIn 0.3s ease-in-out",
-        }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-xl rounded-3xl border border-[#f1d9c7] bg-gradient-to-b from-[#fffdf9] to-[#fff6ed] shadow-[0_30px_80px_rgba(0,0,0,0.3)] overflow-hidden"
       >
-        <h2
-          style={{
-            fontSize: "20px",
-            fontWeight: "bold",
-            marginBottom: "16px",
-            textAlign: "center",
-            color: "#16a34a",
-          }}
-        >
-          🍽 Add Food
-        </h2>
+        <div className="px-6 sm:px-8 py-5 border-b border-[#eadfd3] bg-white/70 flex items-center justify-between">
+          <h2 className="text-2xl font-semibold text-[#3f2b1f]">Add Food Item</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-9 w-9 rounded-xl border border-[#e8d8c9] text-[#8d6b55] hover:bg-[#fff0e3]"
+            aria-label="Close add food popup"
+          >
+            x
+          </button>
+        </div>
 
         <form
           onSubmit={handleSubmit}
-          style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+          className="px-6 sm:px-8 py-6 space-y-4"
         >
-          <input
-            placeholder="Name of food"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            style={inputStyle}
-          />
+          <div>
+            <label className="text-sm font-medium text-[#5f493c]">Food Name</label>
+            <input
+              placeholder="Name of food"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="mt-1 w-full border border-[#e6d9cb] rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#c48145]"
+            />
+          </div>
 
-          <select
-            value={form.type}
-            onChange={(e) => setForm({ ...form, type: e.target.value })}
-            style={inputStyle}
-          >
-            <option value="veg">Veg</option>
-            <option value="non-veg">Non-Veg</option>
-          </select>
+          <div>
+            <label className="text-sm font-medium text-[#5f493c]">Type</label>
+            <select
+              value={form.type}
+              onChange={(e) => setForm({ ...form, type: e.target.value })}
+              className="mt-1 w-full border border-[#e6d9cb] rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#c48145]"
+            >
+              <option value="veg">Veg</option>
+              <option value="non-veg">Non-Veg</option>
+            </select>
+          </div>
 
-          <textarea
-            placeholder="Description"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            style={{ ...inputStyle, height: "70px" }}
-          />
+          <div>
+            <label className="text-sm font-medium text-[#5f493c]">Description</label>
+            <textarea
+              placeholder="Description"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              rows={3}
+              className="mt-1 w-full border border-[#e6d9cb] rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#c48145]"
+            />
+          </div>
 
-          <input
-            placeholder="Price"
-            type="number"
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
-            style={inputStyle}
-          />
+          <div>
+            <label className="text-sm font-medium text-[#5f493c]">Price</label>
+            <input
+              placeholder="Price"
+              type="number"
+              value={form.price}
+              onChange={(e) => setForm({ ...form, price: e.target.value })}
+              className="mt-1 w-full border border-[#e6d9cb] rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#c48145]"
+            />
+          </div>
 
           {loadingLocation ? (
-            <p style={{ fontSize: "12px", color: "gray" }}>📍 Fetching location...</p>
+            <p className="text-sm text-[#846e5f]">Fetching location...</p>
           ) : form.lat && form.lng ? (
-            <p style={{ fontSize: "12px", color: "green" }}>
+            <p className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
               Location captured: {form.lat.toFixed(4)}, {form.lng.toFixed(4)}
             </p>
           ) : (
-            <p style={{ fontSize: "12px", color: "red" }}>
-              ⚠ Could not fetch location, please enable GPS.
+            <p className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+              Could not fetch location, please enable GPS.
             </p>
           )}
 
-          <input type="file" multiple onChange={handleImageChange} />
+          <div>
+            <label className="text-sm font-medium text-[#5f493c]">Images</label>
+            <input
+              type="file"
+              multiple
+              onChange={handleImageChange}
+              className="mt-1 block w-full text-sm text-[#6d5648] file:mr-3 file:rounded-lg file:border-0 file:bg-[#f2e7dc] file:px-3 file:py-2 file:text-[#6d4123] hover:file:bg-[#ead8c6]"
+            />
+          </div>
 
-          <button
-            type="submit"
-            style={{
-              background: "#16a34a",
-              color: "white",
-              padding: "10px",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontWeight: "600",
-              fontSize: "15px",
-              transition: "0.2s",
-            }}
-            onMouseOver={(e) => (e.target.style.background = "#15803d")}
-            onMouseOut={(e) => (e.target.style.background = "#16a34a")}
-          >
-            ✅ Submit
-          </button>
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-3 rounded-xl border border-[#e7d4c4] bg-white text-[#80563c] hover:bg-[#fff3e8]"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-3 rounded-xl bg-[#995014] hover:bg-[#7f4110] text-white font-semibold"
+            >
+              Save Food
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 }
-
-// ✅ Reusable input style
-const inputStyle = {
-  padding: "10px",
-  border: "1px solid #ccc",
-  borderRadius: "6px",
-  fontSize: "14px",
-  outline: "none",
-};
